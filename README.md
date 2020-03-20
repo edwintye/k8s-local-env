@@ -7,7 +7,8 @@ in the [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress
 trying the example requires an `nginx` pre-installed. The baseline provided here aims to streamline the process
 such that developers have access to a work-able environment easily. 
 
-Running `setup.sh` will create 3 namespaces with the following basic components:
+Running [`setup.sh`](https://github.com/edwintye/k8s-local-env/blob/master/setup.sh) will create 3 namespaces
+with the following basic components:
 
 __**ingress**__
   - nginx
@@ -20,6 +21,10 @@ __**logging**__
   - elasticsearch
   - fluent bit
   - kibana &mdash; UI at \<hostname\>:31000
+
+Assuming that this is a local deployment, \<hostname\> will simply be `localhost`, and `localhost` will be used
+from herein in all the code blocks.  Applications deployed with the annotation `kubernetes.io/ingress.class: nginx`
+will also be available at `localhost/path` where `/path` is the path defined in the ingress extension.
 
 ### Caveats
   - As the aim here is to effectively create a scratch environment, persistent storage is disabled for all the
@@ -52,6 +57,16 @@ then grafana will ask you to change the password at login, hence we use somethin
 that step.  A translation to base64 is expected when you replace the values in the secret, i.e. 
 
 ![What is base64](https://github.com/edwintye/k8s-local-env/blob/master/pics/password_base64.png)
+
+#### Ingress
+Applications can be routed via the ingress controller using the annotation `kubernetes.io/ingress.class: nginx`,
+an example is [examples/echo.yaml](https://github.com/edwintye/k8s-local-env/blob/master/examples/echo.yaml).  To test
+a correct installation of the ingress controller
+
+```bash
+kubectl apply -f examples/echo.yaml
+curl -i localhost/foo
+```
 
 #### Metrics server
 The default is that we assume the metrics server have been installed, else use `setup.sh 1` instead to install
