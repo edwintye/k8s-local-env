@@ -1,0 +1,51 @@
+image:
+  repository: "docker.elastic.co/kibana/kibana-oss"
+  tag: "6.8.7"
+  pullPolicy: "IfNotPresent"
+
+env:
+  ## All Kibana configuration options are adjustable via env vars.
+  ## To adjust a config option to an env var uppercase + replace `.` with `_`
+  ## Ref: https://www.elastic.co/guide/en/kibana/current/settings.html
+  ## For kibana < 6.6, use ELASTICSEARCH_URL instead
+  ELASTICSEARCH_HOSTS: http://elasticsearch-client:9200
+  # SERVER_PORT: 5601
+  # LOGGING_VERBOSE: "true"
+# SERVER_DEFAULTROUTE: "/app/kibana"
+
+#files:
+#  kibana.yml:
+#    ## Default Kibana configuration from kibana-docker.
+#    server.name: kibana
+#    server.host: "0"
+#    ## For kibana < 6.6, use elasticsearch.url instead
+#    elasticsearch.hosts: http://elasticsearch-client:9200
+
+service:
+  type: NodePort
+  nodePort: 31000
+  externalPort: 443
+  internalPort: 5601
+
+resources:
+  limits:
+    cpu: 0.5
+    memory: 300Mi
+  requests:
+    cpu: 0.1
+    memory: 100Mi
+
+livenessProbe:
+  enabled: true
+  path: /status
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  path: /status
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
+  periodSeconds: 10
+  successThreshold: 3
