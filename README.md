@@ -10,14 +10,14 @@ such that developers have access to a work-able environment easily.
 Running [`setup.sh`](https://github.com/edwintye/k8s-local-env/blob/master/setup.sh) will create 3 namespaces
 with the following basic components:
 
-__**ingress**__
+###### ingress
   - nginx
 
-__**monitoring**__
+###### monitoring
   - prometheus
   - grafana &mdash; UI at admin:grafana@\<hostname\>:30000
   
-__**logging**__
+###### logging
   - elasticsearch
   - fluent bit
   - kibana &mdash; UI at \<hostname\>:31000
@@ -50,6 +50,7 @@ logging, monitoring, and ingress &mdash; will be created if they don't exists al
 
 ![Setup interrobang](https://github.com/edwintye/k8s-local-env/blob/master/pics/setup.png)
 
+
 #### Grafana
 A default username and password has been set to **admin** and **grafana** respectively.  To change the username
 or password, `monitoring/grafana-configs.yaml` is the file you looking for.  Note that if you use admin/admin
@@ -57,6 +58,7 @@ then grafana will ask you to change the password at login, hence we use somethin
 that step.  A translation to base64 is expected when you replace the values in the secret, i.e. 
 
 ![What is base64](https://github.com/edwintye/k8s-local-env/blob/master/pics/password_base64.png)
+
 
 #### Ingress
 Applications can be routed via the ingress controller using the annotation `kubernetes.io/ingress.class: nginx`,
@@ -67,6 +69,27 @@ a correct installation of the ingress controller
 kubectl apply -f examples/echo.yaml
 curl -i localhost/foo
 ```
+
+
+#### Prometheus
+Prometheus is deployed directly rather than using the operator so that a scrape is used rather than a
+`ServiceMonitor`.  To enable scrape, annotations should be added with `/path` defaulting to `/metrics` and not
+required, while `/port` and `/scrape` should always be applied.
+
+```yaml
+annotations:
+  prometheus.io/path: "/metrics"
+  prometheus.io/port: "1234"
+  prometheus.io/scrape: "true"
+```
+
+An example can be see in
+[examples/redis.yaml](https://github.com/edwintye/k8s-local-env/blob/master/examples/redis.yaml)
+where metrics from redis is being scraped via a sidecar.  To see an example of the grafana dashboard in action for
+the redis exporter import dashboard id [763](https://grafana.com/grafana/dashboards/763). 
+
+Note that the services installed here (such as elasticsearch) do not have the prometheus annotations.
+
 
 #### Metrics server
 The default is that we assume the metrics server have been installed, else use `setup.sh 1` instead to install
@@ -79,6 +102,7 @@ The reason why we have to put the metrics server in the namespace `kube-system` 
 deleting a namespace requires all the k8s apis to be responding.  Since the metrics server creates the api
 `metrics.k8s.io/v1beta1`, we need to remove the metrics server last and *after* the additional namespaces is
 successfully deleted first.
+
 
 ### Uninstall
 Enter `./teardown.sh` in the shell to remove all the deployments.  A flag of `./teardown.sh 1` will lead to a
