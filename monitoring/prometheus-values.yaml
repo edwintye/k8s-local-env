@@ -1,0 +1,62 @@
+## Define serviceAccount names for components. Defaults to component's fully qualified name.
+##
+serviceAccounts:
+  alertmanager:
+    create: false
+    name:
+  nodeExporter:
+    create: true
+    name:
+  pushgateway:
+    create: true
+    name:
+  server:
+    create: true
+    name:
+
+alertmanager:
+  ## If false, alertmanager will not be installed
+  ##
+  enabled: false
+
+server:
+  ## Prometheus server container name
+  ##
+  enabled: true
+  name: server
+  sidecarContainers:
+
+  ## Prometheus server container image
+  ##
+  image:
+    repository: prom/prometheus
+    tag: v2.16.0
+    pullPolicy: IfNotPresent
+
+  global:
+    ## How frequently to scrape targets by default
+    ##
+    scrape_interval: 1m
+    ## How long until a scrape request times out
+    ##
+    scrape_timeout: 10s
+    ## How frequently to evaluate rules
+    ##
+    evaluation_interval: 1m
+
+  persistentVolume:
+    ## If true, Prometheus server will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: false
+
+pushgateway:
+  ## If false, pushgateway will not be installed
+  ##
+  enabled: true
+
+  persistentVolume:
+    ## If true, pushgateway will create/use a Persistent Volume Claim
+    ## If false, use emptyDir
+    ##
+    enabled: false
