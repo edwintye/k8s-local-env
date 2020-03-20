@@ -7,7 +7,7 @@ in the [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress
 trying the example requires an `nginx` pre-installed. The baseline provided here aims to streamline the process
 such that developers have access to a work-able environment easily. 
 
-Running [`setup.sh`](https://github.com/edwintye/k8s-local-env/blob/master/setup.sh) will create 3 namespaces
+Running [`./setup`](https://github.com/edwintye/k8s-local-env/blob/master/setup.sh) will create 3 namespaces
 with the following basic components:
 
 ###### ingress
@@ -34,7 +34,7 @@ will also be available at `localhost/path` where `/path` is the path defined in 
 
 ### Prerequisite
 Expects [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and
-[helm](https://helm.sh/docs/intro/install/), click the links for the installation guide.  Of course, kubectl should
+[helm](https://helm.sh/docs/intro/install/), click the links for the installation guide.  Of course, `kubectl` should
 be pointing to a valid k8s be it [docker desktop](https://www.docker.com/products/docker-desktop) or
 [minikube](https://github.com/kubernetes/minikube). All the components are installed via stable helm charts, and
 the repo can be added as follows 
@@ -45,7 +45,7 @@ helm repo update
 ```
 
 ### Installation
-Running the script is as simple as running the bash script `setup.sh`. The aforementioned 3 namespaces &mdash;
+Running the script is as simple as running the bash script `./setup`. The aforementioned 3 namespaces &mdash;
 logging, monitoring, and ingress &mdash; will be created if they don't exists already.
 
 ![Setup interrobang](https://github.com/edwintye/k8s-local-env/blob/master/pics/setup.png)
@@ -92,8 +92,8 @@ Note that the services installed here (such as elasticsearch) do not have the pr
 
 
 #### Metrics server
-The default is that we assume the metrics server have been installed, else use `setup.sh 1` instead to install
-the metrics server into the `kube-system` namespace.  Same with the `teardown.sh` where the default is to not
+The default is that we assume the metrics server have been installed, else use `setup 1` instead to install
+the metrics server into the `kube-system` namespace.  Same with the `teardown` where the default is to not
 uninstall the metrics server, simply because it is required for other operations such as `kubectl top nodes`
 and `kubectl top pods` as well as enabling
 [hpa](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). 
@@ -105,5 +105,5 @@ successfully deleted first.
 
 
 ### Uninstall
-Enter `./teardown.sh` in the shell to remove all the deployments.  A flag of `./teardown.sh 1` will lead to a
+Enter `./teardown` in the shell to remove all the deployments.  A flag of `./teardown 1` will lead to a
 total destruction of k8s with the namespaces logging, monitoring, and ingress disappearing right before your eyes.
