@@ -1,0 +1,10 @@
+sidecar:
+  datasources:
+    enabled: true
+
+service:
+  type: NodePort
+  nodePort: 30000
+
+admin:
+  existingSecret: grafana-secret
