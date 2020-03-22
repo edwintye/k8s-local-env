@@ -46,7 +46,8 @@ helm repo update
 
 ### Installation
 Running the script is as simple as running the bash script `./setup`. The aforementioned 3 namespaces &mdash;
-logging, monitoring, and ingress &mdash; will be created if they don't exists already.
+logging, monitoring, and ingress &mdash; will be created if they don't exists already.  Try `./setup -h` to get
+some help, but you probably won't find it very useful as it currently stands.
 
 ![Setup interrobang](https://github.com/edwintye/k8s-local-env/blob/master/pics/setup.png)
 
@@ -92,7 +93,7 @@ Note that the services installed here (such as elasticsearch) do not have the pr
 
 
 #### Metrics server
-The default is that we assume the metrics server have been installed, else use `setup 1` instead to install
+The default is that we assume the metrics server have been installed, else use add the flag `./setup -m` to install
 the metrics server into the `kube-system` namespace.  Same with the `teardown` where the default is to not
 uninstall the metrics server, simply because it is required for other operations such as `kubectl top nodes`
 and `kubectl top pods` as well as enabling
@@ -105,5 +106,6 @@ successfully deleted first.
 
 
 ### Uninstall
-Enter `./teardown` in the shell to remove all the deployments.  A flag of `./teardown 1` will lead to a
+Enter `./teardown` in the shell to remove all the deployments.  A flag of `./teardown -f` will lead to a
 total destruction of k8s with the namespaces logging, monitoring, and ingress disappearing right before your eyes.
+A double flag `./teardown -fm` rains hell and uninstall the metrics server as well as the namespaces.

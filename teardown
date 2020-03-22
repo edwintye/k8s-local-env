@@ -1,5 +1,39 @@
 #!/usr/bin/env bash
-FULL_TEARDOWN=${1:-0}
+set -e
+
+function_teradown_help() {
+  echo "
+Command: teardown
+Usage:
+  teardown [flags]
+
+Synopsis:
+  setup [-mfh]
+
+Options:
+  -m    Uninstall the metric server
+  -f    Full teardown including the namespace
+  -h    Help, which is what you looking at now"
+  exit 1
+}
+
+while getopts ":fmh" opt; do
+  case $opt in
+  f)
+    FULL_TEARDOWN=true
+    ;;
+  m)
+    METRICS_SERVER=true
+    ;;
+  h)
+    function_teradown_help
+    ;;
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
 echo "Deleting the components in the logging namespace"
 
 helm delete elasticsearch fluent-bit kibana -n logging
@@ -13,7 +47,7 @@ kubectl delete -f monitoring/grafana-configs.yaml -n monitoring
 echo "Deleting the components in the ingress namespace"
 helm delete nginx -n ingress
 
-if [ "$FULL_TEARDOWN" -eq 1 ]; then
+if [ "$FULL_TEARDOWN" = true ]; then
   echo "Deleting the namespaces"
   kubectl delete -f logging/namespace.yaml
   kubectl delete -f monitoring/namespace.yaml
@@ -21,4 +55,10 @@ if [ "$FULL_TEARDOWN" -eq 1 ]; then
 
   echo "Deleting the metrics server"
   helm delete metrics-server -n kube-system
+elif [ "$METRICS_SERVER" = true ]; then
+  echo "Deleting the metrics server"
+  helm delete metrics-server -n kube-system
 fi
+
+
+

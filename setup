@@ -1,6 +1,36 @@
 #!/usr/bin/env bash
-METRICS_SERVER=${1:-0}
-if [ "$METRICS_SERVER" -eq 1 ]; then
+set -e
+
+function_setup_help() {
+  echo "
+Command: setup
+Usage:
+  setup [flags]
+
+Synopsis:
+  setup [-mh]
+
+Flags:
+  -m    Install the metric server
+  -h    Help, which is what you looking at now"
+  exit 1
+}
+
+while getopts ":mh" opt; do
+  case $opt in
+  m)
+    METRICS_SERVER=true
+    ;;
+  h)
+    function_setup_help
+    ;;
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+if [ "$METRICS_SERVER" = true ]; then
   echo "Installing the metrics server"
   ### we need the metrics server to do commands like kubectl top pods and activate hpa
   helm install metrics-server stable/metrics-server -f monitoring/metrics-server-values.yaml -n kube-system
