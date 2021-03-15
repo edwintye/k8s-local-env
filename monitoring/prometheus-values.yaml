@@ -8,16 +8,23 @@ serviceAccounts:
     create: true
     name:
   pushgateway:
-    create: true
+    create: false
     name:
   server:
     create: true
     name:
 
-alertmanager:
-  ## If false, alertmanager will not be installed
-  ##
+kubeStateMetrics:
   enabled: false
+
+alertmanager:
+  enabled: false
+
+nodeExporter:
+  tolerations:
+    - key: "node-role.kubernetes.io/master"
+      operator: "Equal"
+      effect: "NoSchedule"
 
 server:
   ## Prometheus server container name
@@ -26,6 +33,8 @@ server:
   name: server
   sidecarContainers:
 
+  service:
+    servicePort: 9090
   ## Prometheus server container image
   ##
   image:
@@ -36,7 +45,7 @@ server:
   global:
     ## How frequently to scrape targets by default
     ##
-    scrape_interval: 1m
+    scrape_interval: 20s
     ## How long until a scrape request times out
     ##
     scrape_timeout: 10s
@@ -53,7 +62,7 @@ server:
 pushgateway:
   ## If false, pushgateway will not be installed
   ##
-  enabled: true
+  enabled: false
 
   persistentVolume:
     ## If true, pushgateway will create/use a Persistent Volume Claim
