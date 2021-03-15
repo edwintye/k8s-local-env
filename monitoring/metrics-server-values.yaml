@@ -1,6 +1,6 @@
 image:
-  repository: gcr.io/google_containers/metrics-server-amd64
-  tag: v0.3.6
+#  repository: gcr.io/google_containers/metrics-server-amd64
+#  tag: v0.3.6
   pullPolicy: IfNotPresent
 
 args:
