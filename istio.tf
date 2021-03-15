@@ -28,6 +28,6 @@ resource "helm_release" "kiali" {
     file("istio/kiali-values.yaml")
   ]
 
-  namespace = "istio-system"
+  namespace = kubernetes_namespace.istio_system.metadata[0].name
   wait = true
 }
