@@ -11,7 +11,7 @@ resource "helm_release" "metrics-server" {
   version    = "5.4.0"
 
   values = [
-    file("../monitoring/metrics-server-values.yaml")
+    file("monitoring/metrics-server-values.yaml")
   ]
 
   namespace = "kube-system"
@@ -39,7 +39,7 @@ resource "helm_release" "prometheus" {
   version = "11.12.0"
 
   values = [
-    file("../monitoring/prometheus-values.yaml")
+    file("monitoring/prometheus-values.yaml")
   ]
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
@@ -54,7 +54,7 @@ resource "helm_release" "grafana" {
   version = "6.2.1"
 
   values = [
-    file("../monitoring/grafana-values.yaml")
+    file("monitoring/grafana-values.yaml")
   ]
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
