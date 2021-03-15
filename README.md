@@ -1,14 +1,13 @@
 # k8s-local-env
 The purpose of this repo is to provide scripts and values (for helm charts) which allows a rapid setup
-of a local k8s development environment. A local environment aims to eliminate the reliant of the internet, and quite
+of a local k8s development environment. A local environment aims to eliminate reliant of the internet, and quite
 often VPN, because a k8s cluster is hosted on a cloud provider. One of the biggest issue when trying to use
 online examples is the assumption that your k8s already has certain components; `nginx` for example is mentioned
 in the [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)  official k8s documentation but
 trying the example requires an `nginx` pre-installed. The baseline provided here aims to streamline the process
 such that developers have access to a work-able environment easily. 
 
-Running [`./setup`](https://github.com/edwintye/k8s-local-env/blob/master/setup.sh) will create 3 namespaces
-with the following basic components:
+Running `terraform apply` will create multiple namespaces with the following basic components:
 
 ###### ingress
   - nginx
@@ -22,6 +21,16 @@ with the following basic components:
   - fluent bit
   - kibana &mdash; UI at \<hostname\>:31000
 
+###### istio-system
+  - istio
+  - kiali
+
+###### observability
+  - jaeger
+
+###### app
+  - empty namespace with istio sidecar injection enabled
+
 Assuming that this is a local deployment, \<hostname\> will simply be `localhost`, and `localhost` will be used
 from herein in all the code blocks.  Applications deployed with the annotation `kubernetes.io/ingress.class: nginx`
 will also be available at `localhost/path` where `/path` is the path defined in the ingress extension.
@@ -33,32 +42,27 @@ will also be available at `localhost/path` where `/path` is the path defined in 
   - Things will fail and go missing because pods are transient and there is no protection/backup!
 
 ### Prerequisite
-Expects [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and
-[helm](https://helm.sh/docs/intro/install/), click the links for the installation guide.  Of course, `kubectl` should
-be pointing to a valid k8s be it [docker desktop](https://www.docker.com/products/docker-desktop) or
-[minikube](https://github.com/kubernetes/minikube). All the components are installed via stable helm charts, and
-the repo can be added as follows 
+Expects [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/),
+[helm](https://helm.sh/docs/intro/install/), and
+[terraform](https://www.terraform.io/downloads.html); click the links for the installation guide.
+Of course, `kubectl` should  be pointing to a valid k8s be it
+[docker desktop](https://www.docker.com/products/docker-desktop) or
+[minikube](https://github.com/kubernetes/minikube).  Nearly all the components are installed via helm charts, and
+the repos are defined without the terraform files explicitly.
  
-```bash
-helm repo add stable https://kubernetes-charts.storage.googleapis.com
-helm repo update
-```
 
 ### Installation
-Running the script is as simple as running the bash script `./setup`. The aforementioned 3 namespaces &mdash;
-logging, monitoring, and ingress &mdash; will be created if they don't exists already.  Try `./setup -h` to get
-some help, but you probably won't find it very useful as it currently stands.
-
-![Setup interrobang](https://github.com/edwintye/k8s-local-env/blob/master/pics/setup.png)
-
+The construction of the cluster is managed by [terraform](https://www.terraform.io).  Please follow the
+official [download page](https://www.terraform.io/downloads.html) to get the binary.  Setup and teardown
+are simply `terraform apply` and `terraform destory` respectively.  The plans are validated in CI
+as found in the github workflow
+[terraform.yml(https://github.com/edwintye/k8s-local-env/blob/master/.github/worksflows/terraform.yml) file.
 
 #### Grafana
 A default username and password has been set to **admin** and **grafana** respectively.  To change the username
-or password, `monitoring/grafana-configs.yaml` is the file you looking for.  Note that if you use admin/admin
+or password, `monitoring.tf` is the file you looking for.  Note that if you use admin/admin
 then grafana will ask you to change the password at login, hence we use something equally obvious but circumvents
-that step.  A translation to base64 is expected when you replace the values in the secret, i.e. 
-
-![What is base64](https://github.com/edwintye/k8s-local-env/blob/master/pics/password_base64.png)
+that step.  Terraform will translate the secret into base64 automatically.
 
 
 #### Ingress
@@ -103,9 +107,3 @@ The reason why we have to put the metrics server in the namespace `kube-system` 
 deleting a namespace requires all the k8s apis to be responding.  Since the metrics server creates the api
 `metrics.k8s.io/v1beta1`, we need to remove the metrics server last and *after* the additional namespaces is
 successfully deleted first.
-
-
-### Uninstall
-Enter `./teardown` in the shell to remove all the deployments.  A flag of `./teardown -f` will lead to a
-total destruction of k8s with the namespaces logging, monitoring, and ingress disappearing right before your eyes.
-A double flag `./teardown -fm` rains hell and uninstall the metrics server as well as the namespaces.
