@@ -9,9 +9,6 @@ such that developers have access to a work-able environment easily.
 
 Running `terraform apply` will create multiple namespaces with the following basic components:
 
-###### ingress
-  - nginx
-
 ###### monitoring
   - prometheus
   - grafana &mdash; UI at admin:grafana@\<hostname\>:30000
@@ -56,24 +53,13 @@ The construction of the cluster is managed by [terraform](https://www.terraform.
 official [download page](https://www.terraform.io/downloads.html) to get the binary.  Setup and teardown
 are simply `terraform apply` and `terraform destory` respectively.  The plans are validated in CI
 as found in the github workflow
-[terraform.yml(https://github.com/edwintye/k8s-local-env/blob/master/.github/worksflows/terraform.yml) file.
+[terraform.yml](https://github.com/edwintye/k8s-local-env/blob/master/.github/worksflows/terraform.yml) file.
 
 #### Grafana
 A default username and password has been set to **admin** and **grafana** respectively.  To change the username
 or password, `monitoring.tf` is the file you looking for.  Note that if you use admin/admin
 then grafana will ask you to change the password at login, hence we use something equally obvious but circumvents
 that step.  Terraform will translate the secret into base64 automatically.
-
-
-#### Ingress
-Applications can be routed via the ingress controller using the annotation `kubernetes.io/ingress.class: nginx`,
-an example is [examples/echo.yaml](https://github.com/edwintye/k8s-local-env/blob/master/examples/echo.yaml).  To test
-a correct installation of the ingress controller
-
-```bash
-kubectl apply -f examples/echo.yaml
-curl -i localhost/foo
-```
 
 
 #### Prometheus
