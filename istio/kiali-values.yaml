@@ -1,0 +1,20 @@
+auth:
+  strategy: "anonymous"
+
+external_services:
+  grafana:
+    in_cluster_url: http://grafana.monitoring
+    url: http://grafana.monitoring
+    auth:
+      username: "admin"
+      password: "grafana"
+
+  prometheus:
+    custom_metrics_url: http://prometheus-server.monitoring:9090
+    url: http://prometheus-server.monitoring:9090
+
+  tracing:
+    in_cluster_url: http://jaeger.observability:16686/jaeger
+
+  istio:
+    istio_status_enabled: false
