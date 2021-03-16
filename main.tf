@@ -12,7 +12,7 @@ terraform {
 provider "kubernetes" {
   config_context = var.kube_context
   config_path    = var.kube_config
-  version = "2.0.2"
+  version        = "2.0.2"
 }
 
 provider "helm" {
