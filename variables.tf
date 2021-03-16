@@ -5,7 +5,7 @@ variable "cluster_type" {
 variable "storage_class_name" {
   type = map(string)
   default = {
-    kind = "local-path"
+    kind   = "local-path"
     docker = "hostpath"
   }
 }
