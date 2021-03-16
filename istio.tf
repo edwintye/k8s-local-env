@@ -29,5 +29,6 @@ resource "helm_release" "kiali" {
   ]
 
   namespace = kubernetes_namespace.istio_system.metadata[0].name
+  depends_on = [kubernetes_namespace.istio_system]
   wait = true
 }

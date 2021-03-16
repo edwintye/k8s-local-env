@@ -32,7 +32,7 @@ resource "kubernetes_deployment" "jaeger" {
       spec {
         container {
           name = "jaeger"
-          image = "docker.io/jaegertracing/all-in-one:1.20"
+          image = "docker.io/jaegertracing/all-in-one:1.22"
           port {
             container_port = 5775
             name = "zk-compact-trft"
