@@ -5,10 +5,10 @@ resource "kubernetes_namespace" "monitoring" {
 }
 
 resource "helm_release" "metrics-server" {
-  name       = "metrics-server"
+  name = "metrics-server"
   repository = "https://charts.bitnami.com/bitnami"
-  chart      = "metrics-server"
-  version    = "5.4.0"
+  chart = "metrics-server"
+  version = "5.4.0"
 
   values = [
     file("monitoring/metrics-server-values.yaml")
@@ -29,7 +29,8 @@ resource "kubernetes_secret" "grafana-secret" {
     "admin-password" = "grafana"
   }
 
-  depends_on = [kubernetes_namespace.monitoring]
+  depends_on = [
+    kubernetes_namespace.monitoring]
 }
 
 resource "helm_release" "prometheus" {
@@ -44,7 +45,8 @@ resource "helm_release" "prometheus" {
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
   wait = false
-  depends_on = [kubernetes_namespace.monitoring]
+  depends_on = [
+    kubernetes_namespace.monitoring]
 }
 
 resource "helm_release" "grafana" {
@@ -59,10 +61,15 @@ resource "helm_release" "grafana" {
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
   wait = false
-  depends_on = [kubernetes_secret.grafana-secret, helm_release.prometheus]
+  depends_on = [
+    kubernetes_secret.grafana-secret,
+    helm_release.prometheus
+  ]
 }
 
 output "prometheus-url" {
   value = "http://${helm_release.prometheus.metadata[0].name}-server.${helm_release.prometheus.metadata[0].namespace}.svc:9090"
-  depends_on = [helm_release.prometheus]
+  depends_on = [
+    helm_release.prometheus
+  ]
 }
