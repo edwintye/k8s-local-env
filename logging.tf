@@ -15,6 +15,11 @@ resource "helm_release" "es" {
   ]
 
   set {
+    name = "fullnameOverride"
+    value = "elasticsearch"
+  }
+
+  set {
     name = "volumeClaimTemplate.accessModes"
     value = "ReadWriteOnce"
   }
@@ -56,6 +61,11 @@ resource "helm_release" "kibana" {
   values = [
     file("logging/kibana-values.yaml")
   ]
+
+  set {
+    name = "elasticsearchHosts"
+    value = "http://elasticsearch:9200"
+  }
 
   set {
     name = "service.type"
