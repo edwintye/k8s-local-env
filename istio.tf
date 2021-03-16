@@ -21,14 +21,13 @@ resource "kubectl_manifest" "istio-app-mtls" {
     null_resource.istio,
     kubernetes_namespace.app
   ]
-
 }
 
 resource "helm_release" "kiali" {
-  name = "kiali"
+  name       = "kiali"
   repository = "https://kiali.org/helm-charts"
-  chart = "kiali-server"
-  version = "v1.29.0"
+  chart      = "kiali-server"
+  version    = "v1.29.0"
 
   values = [
     file("istio/kiali-values.yaml")
