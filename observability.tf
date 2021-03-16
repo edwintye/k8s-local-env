@@ -100,7 +100,7 @@ resource "kubernetes_deployment" "jaeger" {
             mount_path = "/badger"
           }
           resources {
-            requests {
+            requests = {
               cpu = "10m"
             }
           }
