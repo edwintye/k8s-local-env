@@ -1,12 +1,6 @@
 image: "docker.elastic.co/kibana/kibana-oss"
 # we probably want to version match against the stack on the kibana version just in case
 imageTag: "7.7.0"
-elasticsearchHosts: "http://elasticsearch-master:9200"
-
-# use a NodePort here if you are a path into the cluster
-service:
-  type: NodePort
-  nodePort: 31000
 
 # lower the requirement to just run
 resources:
