@@ -1,11 +1,9 @@
 # k8s-local-env
 The purpose of this repo is to provide scripts and values (for helm charts) which allows a rapid setup
 of a local k8s development environment. A local environment aims to eliminate reliant of the internet, and quite
-often VPN, because a k8s cluster is hosted on a cloud provider. One of the biggest issue when trying to use
-online examples is the assumption that your k8s already has certain components; `nginx` for example is mentioned
-in the [ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)  official k8s documentation but
-trying the example requires an `nginx` pre-installed. The baseline provided here aims to streamline the process
-such that developers have access to a work-able environment easily. 
+often VPN, because a k8s cluster is hosted on a cloud provider. The baseline provided here aims to streamline
+the process such that developers have access to a work-able environment easily.  Furthermore, all the
+components can be used as standalone modules.
 
 Running `terraform apply` will create multiple namespaces with the following basic components:
 
@@ -15,7 +13,7 @@ Running `terraform apply` will create multiple namespaces with the following bas
   
 ###### logging
   - elasticsearch
-  - fluent bit
+  - fluentbit
   - kibana &mdash; UI at \<hostname\>:31000
 
 ###### istio-system
@@ -26,15 +24,12 @@ Running `terraform apply` will create multiple namespaces with the following bas
   - jaeger
 
 ###### app
-  - empty namespace with istio sidecar injection enabled
-
-Assuming that this is a local deployment, \<hostname\> will simply be `localhost`, and `localhost` will be used
-from herein in all the code blocks.  Applications deployed with the annotation `kubernetes.io/ingress.class: nginx`
-will also be available at `localhost/path` where `/path` is the path defined in the ingress extension.
+  - empty namespace with istio sidecar injection enabled; this is created via [modules/istio]
 
 ### Caveats
   - As the aim here is to effectively create a scratch environment, persistent storage is disabled for all the
-  deployments.
+    deployments.  Elasticserach has a mount onto the `/data` location for temporary persistence but it
+    will be deleted along with the rest of the setup.
   - Replication has been lowered to the bare minimum of 1 to reduce the resource consumption.
   - Things will fail and go missing because pods are transient and there is no protection/backup!
 
