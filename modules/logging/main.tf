@@ -1,3 +1,30 @@
+terraform {
+  required_version = ">= 0.14"
+
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">=2.0.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">=2.0.0"
+    }
+  }
+}
+
+provider "kubernetes" {
+  config_context = var.kube_context
+  config_path    = var.kube_config
+}
+
+provider "helm" {
+  kubernetes {
+    config_context = var.kube_context
+    config_path    = var.kube_config
+  }
+}
+
 resource "kubernetes_namespace" "logging" {
   metadata {
     name = "logging"
@@ -11,7 +38,7 @@ resource "helm_release" "es" {
   version    = "7.9.0"
 
   values = [
-    file("logging/elasticsearch-values.yaml")
+    file("${path.module}/elasticsearch-values.yaml")
   ]
 
   set {
@@ -45,6 +72,10 @@ resource "helm_release" "fluent-bit" {
   chart      = "fluent-bit"
   version    = "0.12.3"
 
+  values = [
+    file("${path.module}/fluentbit-values.yaml")
+  ]
+
   namespace = kubernetes_namespace.logging.metadata[0].name
   wait      = true
   depends_on = [
@@ -59,7 +90,7 @@ resource "helm_release" "kibana" {
   version    = "7.9.0"
 
   values = [
-    file("logging/kibana-values.yaml")
+    file("${path.module}/kibana-values.yaml")
   ]
 
   set {
