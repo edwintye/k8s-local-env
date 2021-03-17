@@ -5,8 +5,9 @@ variable "cluster_type" {
 variable "storage_class_name" {
   type = map(string)
   default = {
-    kind   = "local-path"
-    docker = "hostpath"
+    kind     = "local-path"
+    docker   = "hostpath"
+    minikube = "minikube-hostpath"
   }
 }
 
