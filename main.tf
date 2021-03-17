@@ -1,28 +1,27 @@
 terraform {
-  required_version = ">= 0.13"
-
-  required_providers {
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
-    }
-  }
+  required_version = ">= 0.14"
 }
 
-provider "kubernetes" {
-  config_context = var.kube_context
-  config_path    = var.kube_config
-  version        = "2.0.2"
+module "istio" {
+  source = "./modules/istio"
+  kube_config = var.kube_config
+  kube_context = var.kube_context
 }
 
-provider "helm" {
-  kubernetes {
-    config_context = var.kube_context
-    config_path    = var.kube_config
-  }
-  version = "2.0.3"
+module "logging" {
+  source = "./modules/logging"
+  kube_config = var.kube_config
+  kube_context = var.kube_context
 }
 
-provider "null" {
-  version = "3.1.0"
+module "monitoring" {
+  source = "./modules/monitoring"
+  kube_config = var.kube_config
+  kube_context = var.kube_context
+}
+
+module "observability" {
+  source = "./modules/observability"
+  kube_config = var.kube_config
+  kube_context = var.kube_context
 }
