@@ -1,3 +1,19 @@
+terraform {
+  required_version = ">= 0.14"
+
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">=2.0.0"
+    }
+  }
+}
+
+provider "kubernetes" {
+  config_context = var.kube_context
+  config_path    = var.kube_config
+}
+
 resource "kubernetes_namespace" "observability" {
   metadata {
     name = "observability"
@@ -149,9 +165,3 @@ resource "kubernetes_service" "jaeger" {
     }
   }
 }
-
-output "jaeger-ui" {
-  value      = "http://${kubernetes_service.jaeger.metadata[0].name}.${kubernetes_service.jaeger.metadata[0].namespace}.svc:${kubernetes_service.jaeger.spec[0].port[3].port}"
-  depends_on = [kubernetes_deployment.jaeger, kubernetes_service.jaeger]
-}
-
