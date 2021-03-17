@@ -1,6 +1,6 @@
 image: "docker.elastic.co/kibana/kibana-oss"
 # we probably want to version match against the stack on the kibana version just in case
-imageTag: "7.7.0"
+imageTag: "7.9.0"
 
 # lower the requirement to just run
 resources:
@@ -10,3 +10,16 @@ resources:
   limits:
     cpu: "500m"
     memory: "300Mi"
+
+lifecycle:
+  postStart:
+    exec:
+      command:
+        - bash
+        - -c
+        - |
+          #!/bin/bash
+          # Import a dashboard
+          KB_URL=http://localhost:5601
+          while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL)" != "200" ]]; do sleep 1; done
+          curl -XPOST "$KB_URL/api/saved_objects/index-pattern/logstash-*" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "logstash-*"}}'
